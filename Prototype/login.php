@@ -1,31 +1,36 @@
 <?php
 session_start();
+// get users list
+include 'users.php';
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-  $name = "";
-  $password = "";
-  if (isset($_POST["name"])){
-  $name = strtolower($_POST["name"]);
-  }
-  if (isset($_POST["psw"])){
-  $password = strtolower($_POST["psw"]);
-  }
+  $name = $_POST["name"] ?? "";
+  $password = $_POST["psw"] ?? "";
+  // loop only if the name and password aren't empty
   if (!empty($name) && !empty($password)) {
-    $_SESSION["user"] = $name;
-    $_SESSION["password"] = $password;
-    header('Location: dashboard.php');
-    exit;
-  } else {
-    $message1 = "";
-    $message2 = "";
-    if (empty($name)) {
-      $message1 = "Please fill your name";
-    } 
-    if (empty($password)) {
-      $message2 = "Please fill your password";
+    foreach($users as $user) {
+
+      if ($user["name"] === $name && $user["password"] === $password) {
+        // if the user is on the list but not active
+          if (!$user["active"]) {
+            echo "<p style='color:red;'>Account is deactivated.</p>";
+            exit;
+        }
+        // if the user is active store his name and role in the session
+        $_SESSION["user"] = [
+          "name" => $user["name"],
+          "role" => $user["role"]
+        ];
+        header("Location: dashboard.php");
+        exit;
+      }
     }
-    echo "<p style='color:red;'>$message1</p>";
-    echo "<p style='color:red;'>$message2</p>";
   }
+if (empty($name) || empty($password)) {
+    echo "<p style='color:red;'>Please fill all fields.</p>";
+} else {
+    echo "<p style='color:red;'>Invalid credentials.</p>";
+}
 }
 ?>
 <!DOCTYPE html>
