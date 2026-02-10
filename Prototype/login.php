@@ -6,10 +6,13 @@ include 'users.php';
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $name = $_POST["name"] ?? "";
   $password = $_POST["psw"] ?? "";
+  $noti = false;
   // loop only if the name and password aren't empty
   if (!empty($name) && !empty($password)) {
     foreach($users as $user) {
-
+      if ($user["name"] === $name && $user["password"] !== $password) {
+        $noti = true;
+      }
       if ($user["name"] === $name && $user["password"] === $password) {
         // if the user is on the list but not active
           if (!$user["active"]) {
@@ -26,11 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       }
     }
   }
-if (empty($name) || empty($password)) {
-    echo "<p style='color:red;'>Please fill all fields.</p>";
-} else {
-    echo "<p style='color:red;'>Invalid credentials.</p>";
-}
+  if($noti === false) {
+    if (empty($name) || empty($password)) {
+        echo "<p style='color:red;'>Please fill all fields.</p>";
+    } else {
+        echo "<p style='color:red;'>Invalid credentials.</p>";
+    }
+  }else {
+    echo "<p style='color:red;'>Password is incorrect, Try again</p>";
+  }
 }
 ?>
 <!DOCTYPE html>
