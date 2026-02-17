@@ -17,7 +17,7 @@ if (isset($_POST['add'])) {
       "titre" => $titre,
       "etat" => "a-faire"
     ];
-    file_put_contents("tasks.json", json_encode($tasks));
+    file_put_contents("tasks.json", json_encode($tasks, JSON_PRETTY_PRINT));
     header("Location: Todolist.php");
     exit;
   }

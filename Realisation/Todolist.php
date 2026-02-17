@@ -5,8 +5,39 @@ if (file_exists("tasks.json")) {
 } else {
   $tasks = [];
 }
-// get filter from url
+// delete a task
+$delete = $_GET['delete'] ?? "";
+if (!empty($delete)) {
+  $tasks = array_filter($tasks, function ($task) use ($delete) {
+    return $task['id'] != $delete;
+  });
 
+  file_put_contents("tasks.json", json_encode($tasks, JSON_PRETTY_PRINT));
+
+  header("Location: Todolist.php");
+  exit;
+}
+// change task statut
+$change = $_GET['change'] ?? "";
+
+if (!empty($change)) {
+  foreach ($tasks as &$task) {
+    if ($task['id'] == $change) {
+
+      if ($task['etat'] == "a-faire") {
+        $task['etat'] = "fait";
+      } else {
+        $task['etat'] = "a-faire";
+      }
+      break;
+    }
+  }
+  unset($task);
+  file_put_contents("tasks.json", json_encode($tasks, JSON_PRETTY_PRINT));
+  header("Location: Todolist.php");
+  exit;
+}
+// get filter from url
 $filter = $_GET['filter'] ?? 'all';
 // by default show all tasks
 $filteredTasks = $tasks;
@@ -19,6 +50,8 @@ if ($filter !== 'all') {
     return $task['etat'] === $filter;
   });
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,6 +93,8 @@ if ($filter !== 'all') {
   <th>Id</th>
   <th>Titre</th>
   <th>Status</th>
+  <th>Change</th>
+  <th>Delete</th>
   </tr>";
   foreach ($filteredTasks as $task) {
     $list .= "
@@ -67,6 +102,8 @@ if ($filter !== 'all') {
     <td>{$task['id']}</td>
     <td>{$task['titre']}</td>
     <td>{$task['etat']}</td>
+    <td><a href='Todolist.php?change={$task['id']}'>changer</a></td>
+    <td><a href='Todolist.php?delete={$task['id']}'>supprimer</a></td>
     </tr>
   ";
   }
