@@ -76,13 +76,22 @@ if ($filter !== 'all') {
     .t th {
       background-color: #f2f2f2;
     }
+
+    a {
+      text-decoration: none;
+      color: blue;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 
 <body>
   <h1>List des taches</h1>
-  <a href="Todolist.php">Toutes</a>
-  <a href="Todolist.php?filter=a-faire">A faire</a>
+  <a href="Todolist.php">Toutes |</a>
+  <a href="Todolist.php?filter=a-faire">A faire |</a>
   <a href="Todolist.php?filter=fait">Fait</a>
   <hr>
   <?php
